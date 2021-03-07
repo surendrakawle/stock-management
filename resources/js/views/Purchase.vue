@@ -66,6 +66,16 @@
                               />
                             </div>
                           </div>
+                          <label for="name">Price</label>
+                          <div class="form-group">
+                            <div class="form-line">
+                              <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Enter Purchase Price"
+                              />
+                            </div>
+                          </div>
                           <label for="name">QTY</label>
                           <div class="form-group">
                             <div class="form-line">

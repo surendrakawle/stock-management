@@ -14,7 +14,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $data = Product::get();
+        $data = Product::orderBy('id', 'DESC')->get();
         return response()->json(["error" => false, "data" => $data, "message" => ""], 200);
     }
 
@@ -36,7 +36,17 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if(!isset($request->id)) {
+            $product = Product::create(["name" => $request->name,"category" => $request->category,"qty" => $request->qty,"price" => $request->price]);
+            return response()->json(["error" => false, "data" => $product, "message" => "Product added"], 200);
+        } else {
+            $c = Product::find($request->id);
+            if(isset($c)) {
+                $c->update(["name" => $request->name,"category" => $request->category,"qty" => $request->qty,"price" => $request->price]);
+                return response()->json(["error" => false, "data" => [], "message" => "Product Updated"], 200);
+            } 
+            return response()->json(["error" => true, "data" => [], "message" => "something went wrong"], 200);
+        }
     }
 
     /**
@@ -47,7 +57,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        
     }
 
     /**
@@ -79,8 +89,13 @@ class ProductController extends Controller
      * @param  \App\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(Request $request)
     {
-        //
+        if(isset($request->id)) {
+            $c = Product::find($request->id);
+            $c->delete();
+            return response()->json(["error" => false, "data" => [], "message" => "Product deleted successfully"], 200);
+        }
+        return response()->json(["error" => true, "data" => [], "message" => "something went wrong"], 200);
     }
 }

@@ -74,6 +74,16 @@
                               />
                             </div>
                           </div>
+                          <label for="name">QTY</label>
+                          <div class="form-group">
+                            <div class="form-line">
+                              <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Enter Sale Quantity"
+                              />
+                            </div>
+                          </div>
                           <label for="name">Discount</label>
                           <div class="form-group">
                             <div class="form-line">
@@ -84,14 +94,14 @@
                               />
                             </div>
                           </div>
-                          <label for="name">Tax</label>
+                          <label for="name">Payment Mode</label>
                           <div class="form-group">
                             <div class="form-line">
-                              <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Enter Sale name"
-                              />
+                             <select class="form-control">
+                                <option value="cash"> नगदी </option>
+                                <option value="milk"> दूध पेमेंट </option>
+                                <option value="cr"> उधारी </option>
+                              </select>
                             </div>
                           </div>
                         </form>

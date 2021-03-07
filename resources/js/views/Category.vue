@@ -27,6 +27,7 @@
                     type="button"
                     class="btn btn-success waves-effect"
                     data-toggle="modal"
+                    @click="id = '',name =''"
                     data-target="#addUpdateModal"
                   >
                     <i class="material-icons">add</i>
@@ -49,6 +50,11 @@
                           <label for="name">Name</label>
                           <div class="form-group">
                             <div class="form-line">
+                              <input
+                                type="hidden"
+                                class="form-control"
+                                v-model="id"
+                              />
                               <input
                                 type="text"
                                 class="form-control"
@@ -83,10 +89,10 @@
             <div class="body">
               <div class="table-responsive">
                 <table class="table table-hover dashboard-task-infos">
-                  <thead>
+                  <thead style="text-align:center">
                     <tr>
-                      <th>#</th>
-                      <th>Name</th>
+                      <th width="10%">#</th>
+                      <th width="70%">Name</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -94,7 +100,14 @@
                     <tr v-for="(category, index) in itemsWithSno" :key="index">
                       <td>{{ category.sno }}</td>
                       <td>{{ category.name }}</td>
-                      <td><span class="label bg-green">Doing</span></td>
+                      <td>
+                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" @click="edit(category.id, category.name)">
+                          <div class="demo-google-material-icon"> <i class="material-icons">mode_edit</i> </div>
+                        </div>
+                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" @click="deleteCategory(category.id)">
+                          <div class="demo-google-material-icon"> <i class="material-icons">delete</i> </div>
+                        </div>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -144,12 +157,38 @@ export default {
     },
     add() {
       let instance = this;
+      instance.modalTitle = "Add Category";
       api
-        .post("/api/add-category", { name: instance.name }, this)
-        .then(function (res) {})
+        .post("/api/add-category", { name: instance.name, id: instance.id }, this)
+        .then(function (res) {
+          $('#addUpdateModal').modal('toggle');
+          instance.list()
+        })
+        .catch(function (e) {
+          $('#addUpdateModal').modal('toggle');
+          console.log(e);
+        });
+    },
+    deleteCategory(id) {
+      let instance = this;
+      let f = confirm("Are you sure to delete!");
+      if(!f) return false;
+      api
+        .post("/api/delete-category", { id: id }, this)
+        .then(function (res) {
+          instance.list()
+        })
         .catch(function (e) {
           console.log(e);
         });
+    },
+    edit(id, name) {
+      let instance = this;
+      instance.id = id;
+      instance.name = name;
+      instance.modalTitle = "Edit Category";
+      $('#addUpdateModal').modal('toggle');
+
     },
   },
 };

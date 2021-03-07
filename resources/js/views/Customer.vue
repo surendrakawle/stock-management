@@ -46,6 +46,16 @@
                       </div>
                       <div class="modal-body">
                         <form>
+                          <label for="name">ID</label>
+                          <div class="form-group">
+                            <div class="form-line">
+                              <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Enter customer id"
+                              />
+                            </div>
+                          </div>
                           <label for="name">Name</label>
                           <div class="form-group">
                             <div class="form-line">
@@ -63,6 +73,16 @@
                                 type="number"
                                 class="form-control"
                                 placeholder="Enter mobile number"
+                              />
+                            </div>
+                          </div>
+                          <label for="name">Amount</label>
+                          <div class="form-group">
+                            <div class="form-line">
+                              <input
+                                type="number"
+                                class="form-control"
+                                placeholder="Enter amount"
                               />
                             </div>
                           </div>

@@ -27,6 +27,7 @@
                     type="button"
                     class="btn btn-success waves-effect"
                     data-toggle="modal"
+                    @click="id=''"
                     data-target="#addUpdateModal"
                   >
                     <i class="material-icons">add</i>
@@ -50,26 +51,32 @@
                           <div class="form-group">
                             <div class="form-line">
                               <input
+                                v-model="name"
                                 type="text"
                                 class="form-control"
                                 placeholder="Enter Product Name"
+                              />
+                               <input
+                                v-model="id"
+                                type="hidden"
+                                class="form-control"
+                                placeholder=""
                               />
                             </div>
                           </div>
                           <label for="category">Category</label>
                           <div class="form-group">
                             <div class="form-line">
-                              <input
-                                type="number"
-                                class="form-control"
-                                placeholder="Enter Stock Quantity"
-                              />
+                              <select v-model="category">
+                                <option v-for="c in category1" :value="c.id"> {{c.name}} </option>
+                              </select>
                             </div>
                           </div>
                           <label for="stock">QTY Stock</label>
                           <div class="form-group">
                             <div class="form-line">
                               <input
+                                v-model="qty"
                                 type="number"
                                 class="form-control"
                                 placeholder="Enter Stock Quantity"
@@ -80,6 +87,7 @@
                           <div class="form-group">
                             <div class="form-line">
                               <input
+                                v-model="price"
                                 type="number"
                                 class="form-control"
                                 placeholder="Enter Price"
@@ -90,6 +98,7 @@
                       </div>
                       <div class="modal-footer">
                         <button
+                          @click="add()"
                           type="button"
                           class="btn btn-success m-t-15 waves-effect"
                         >
@@ -113,105 +122,23 @@
                 <table class="table table-hover dashboard-task-infos">
                   <thead>
                     <tr>
-                      <th>#</th>
-                      <th>Task</th>
-                      <th>Status</th>
-                      <th>Manager</th>
-                      <th>Progress</th>
+                      <th>Name</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>Task A</td>
-                      <td><span class="label bg-green">Doing</span></td>
-                      <td>John Doe</td>
+                    <tr v-for="(product, index) in product" :key="index">
+                      <td>{{ product.name }}</td>
+                      <td>{{ product.qty }}</td>
+                      <td>{{ product.price }}</td>
                       <td>
-                        <div class="progress">
-                          <div
-                            class="progress-bar bg-green"
-                            role="progressbar"
-                            aria-valuenow="62"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            style="width: 62%"
-                          ></div>
+                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" @click="edit(product.id, product.name, product.category, product.qty, product.price)">
+                          <div class="demo-google-material-icon"> <i class="material-icons">mode_edit</i> </div>
                         </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>Task B</td>
-                      <td><span class="label bg-blue">To Do</span></td>
-                      <td>John Doe</td>
-                      <td>
-                        <div class="progress">
-                          <div
-                            class="progress-bar bg-blue"
-                            role="progressbar"
-                            aria-valuenow="40"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            style="width: 40%"
-                          ></div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>Task C</td>
-                      <td><span class="label bg-light-blue">On Hold</span></td>
-                      <td>John Doe</td>
-                      <td>
-                        <div class="progress">
-                          <div
-                            class="progress-bar bg-light-blue"
-                            role="progressbar"
-                            aria-valuenow="72"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            style="width: 72%"
-                          ></div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>4</td>
-                      <td>Task D</td>
-                      <td>
-                        <span class="label bg-orange">Wait Approvel</span>
-                      </td>
-                      <td>John Doe</td>
-                      <td>
-                        <div class="progress">
-                          <div
-                            class="progress-bar bg-orange"
-                            role="progressbar"
-                            aria-valuenow="95"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            style="width: 95%"
-                          ></div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>5</td>
-                      <td>Task E</td>
-                      <td>
-                        <span class="label bg-red">Suspended</span>
-                      </td>
-                      <td>John Doe</td>
-                      <td>
-                        <div class="progress">
-                          <div
-                            class="progress-bar bg-red"
-                            role="progressbar"
-                            aria-valuenow="87"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            style="width: 87%"
-                          ></div>
+                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1" @click="deleteProduct(product.id)">
+                          <div class="demo-google-material-icon"> <i class="material-icons">delete</i> </div>
                         </div>
                       </td>
                     </tr>
@@ -228,16 +155,89 @@
 </template>
 
 <script>
+import api from "../api";
 export default {
   data: function () {
     return {
       title: "Product List",
       modalTitle: "Add Product",
+      category: '',
+      price: 0, 
+      qty: 0, 
+      id: '',
+      name: '',
+      category1: [],
+      product: [],
     };
   },
   created() {
+    this.categories();
+    this.list();
     this.$store.dispatch("setTab", "product");
     // console.log(this.$store);
+  },
+  methods: {
+    list() {
+      let instance = this;
+      api
+        .post("/api/get-product", [], this)
+        .then(function (res) {
+          instance.product = res.data;
+        })
+        .catch(function (e) {
+          console.log(e);
+        });
+    },
+    categories() {
+      let instance = this;
+      api
+        .post("/api/get-category", [], this)
+        .then(function (res) {
+          instance.category1 = res.data;
+        })
+        .catch(function (e) {
+          console.log(e);
+        });
+    },
+    add() {
+      let instance = this;
+      instance.modalTitle = "Add Product";
+      let data = { name: instance.name, id: instance.id, category: instance.category, qty: instance.qty, price: instance.price}
+      api
+        .post("/api/add-product", data, this)
+        .then(function (res) {
+          $('#addUpdateModal').modal('toggle');
+          instance.list()
+        })
+        .catch(function (e) {
+          $('#addUpdateModal').modal('toggle');
+          console.log(e);
+        });
+    },
+    deleteProduct(id) {
+      let instance = this;
+      let f = confirm("Are you sure to delete!");
+      if(!f) return false;
+      api
+        .post("/api/delete-product", { id: id }, this)
+        .then(function (res) {
+          instance.list()
+        })
+        .catch(function (e) {
+          console.log(e);
+        });
+    },
+    edit(id, name, category, qty, price) {
+      let instance = this;
+      instance.id = id;
+      instance.name = name;
+      instance.category = category;
+      instance.qty = qty; 
+      instance.price = price; 
+      instance.modalTitle = "Edit Category";
+      $('#addUpdateModal').modal('toggle');
+
+    },
   },
 };
 </script>

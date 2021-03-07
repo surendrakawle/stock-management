@@ -14,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $data = Category::select('id','name')->get();
+        $data = Category::select('id','name')->orderBy('id', 'DESC')->get();
         return response()->json(["error" => false, "data" => $data, "message" => ""], 200);
     }
 
@@ -36,8 +36,17 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $category = Category::create(["name" => $request->name]);
-        return response()->json(["error" => false, "data" => $category, "message" => "Category added"], 200);
+        if(!isset($request->id)) {
+            $category = Category::create(["name" => $request->name]);
+            return response()->json(["error" => false, "data" => $category, "message" => "Category added"], 200);
+        } else {
+            $c = Category::find($request->id);
+            if(isset($c)) {
+                $c->update(['name'=> $request->name]);
+                return response()->json(["error" => false, "data" => [], "message" => "Category Updated"], 200);
+            } 
+            return response()->json(["error" => true, "data" => [], "message" => "something went wrong"], 200);
+        }
     }
 
     /**
@@ -80,8 +89,13 @@ class CategoryController extends Controller
      * @param  \App\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy(Request $request)
     {
-        //
+        if(isset($request->id)) {
+            $c = Category::find($request->id);
+            $c->delete();
+            return response()->json(["error" => false, "data" => [], "message" => "Category deleted successfully"], 200);
+        }
+        return response()->json(["error" => true, "data" => [], "message" => "something went wrong"], 200);
     }
 }
